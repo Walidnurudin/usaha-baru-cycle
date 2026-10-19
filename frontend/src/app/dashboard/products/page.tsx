@@ -103,11 +103,24 @@ export default function ProductManagementPage() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+
+      // Validasi ukuran maksimal 2MB
+      const maxSizeBytes = 2 * 1024 * 1024;
+      if (file.size > maxSizeBytes) {
+        const sizeInMb = (file.size / (1024 * 1024)).toFixed(2);
+        alert(`Ukuran file gambar maksimal 2MB. File yang Anda pilih berukuran ${sizeInMb}MB.`);
+        e.target.value = '';
+        return;
+      }
+
       setSelectedFile(file);
 
-      // Instant upload to Vercel Blob
+      // Instant upload ke server / storage
       const token = localStorage.getItem('ubc_token');
-      if (!token) return;
+      if (!token) {
+        alert('Sesi admin telah berakhir. Silakan login kembali.');
+        return;
+      }
 
       try {
         setUploadingImage(true);
@@ -431,10 +444,10 @@ export default function ProductManagementPage() {
                 </div>
               </div>
 
-              {/* Image Upload Integration (Vercel Blob) */}
+              {/* Image Upload Integration */}
               <div>
                 <label className="block font-bold text-slate-700 uppercase mb-1">
-                  Foto Produk (Vercel Blob Storage) <span className="text-rose-500">*</span>
+                  Foto Produk <span className="text-rose-500">*</span>
                 </label>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3">
@@ -443,16 +456,23 @@ export default function ProductManagementPage() {
                       <span>{uploadingImage ? 'Mengunggah...' : 'Pilih File Gambar'}</span>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
                         onChange={handleFileChange}
                         className="hidden"
                       />
                     </label>
 
                     {uploadingImage && (
-                      <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
+                      <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Mengunggah foto...</span>
+                      </div>
                     )}
                   </div>
+
+                  <p className="text-[11px] text-slate-500">
+                    Format: <strong>JPG, PNG, WEBP</strong>. Maksimal ukuran: <strong>2MB</strong>.
+                  </p>
 
                   {/* Manual URL input fallback */}
                   <input

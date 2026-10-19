@@ -37,3 +37,9 @@ Thumbs.db
 
 # Prisma generated artifacts
 # (Keep prisma schema & migrations, ignore local engines if any)
+
+# Uploads directory
+uploads/
+**/uploads/*
+!**/uploads/products/.gitkeep
+

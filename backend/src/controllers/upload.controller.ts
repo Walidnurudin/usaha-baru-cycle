@@ -24,55 +24,58 @@ export const uploadProductImage = async (req: Request, res: Response): Promise<v
       return;
     }
 
-    // Check size (max 5MB)
-    if (req.file.size > 5 * 1024 * 1024) {
+    // Validasi ukuran maksimal 2MB
+    const MAX_FILE_SIZE = 2 * 1024 * 1024;
+    if (req.file.size > MAX_FILE_SIZE) {
       res.status(400).json({
         success: false,
-        message: 'Ukuran file gambar maksimal 5MB.',
+        message: 'Ukuran file gambar maksimal 2MB.',
       });
       return;
     }
 
-    const fileExt = path.extname(req.file.originalname) || '.jpg';
+    // Validasi ketersediaan BLOB_READ_WRITE_TOKEN
+    if (
+      !env.BLOB_READ_WRITE_TOKEN ||
+      env.BLOB_READ_WRITE_TOKEN.trim() === '' ||
+      env.BLOB_READ_WRITE_TOKEN.includes('xxxxxxxx')
+    ) {
+      res.status(500).json({
+        success: false,
+        message:
+          'Vercel Blob Storage belum dikonfigurasi. Harap masukkan BLOB_READ_WRITE_TOKEN dari dashboard Vercel Stores ke backend/.env.',
+      });
+      return;
+    }
+
+    // Penamaan file unik untuk Vercel Blob
+    const fileExt = path.extname(req.file.originalname).toLowerCase() || '.jpg';
     const randomHash = crypto.randomBytes(8).toString('hex');
-    const safeName = `products/usaha-baru-${Date.now()}-${randomHash}${fileExt}`;
+    const safePathname = `products/usaha-baru-${Date.now()}-${randomHash}${fileExt}`;
 
-    // Upload to Vercel Blob Storage
-    if (env.BLOB_READ_WRITE_TOKEN) {
-      const blob = await put(safeName, req.file.buffer, {
-        access: 'public',
-        token: env.BLOB_READ_WRITE_TOKEN,
-      });
-
-      res.status(200).json({
-        success: true,
-        message: 'Foto produk berhasil diunggah ke Vercel Blob.',
-        data: {
-          url: blob.url,
-          downloadUrl: blob.downloadUrl,
-          pathname: blob.pathname,
-        },
-      });
-      return;
-    }
-
-    // Development Fallback if token is not set yet
-    console.warn('⚠️ BLOB_READ_WRITE_TOKEN belum diset di .env. Menggunakan data URL fallback untuk mode development.');
-    const base64 = req.file.buffer.toString('base64');
-    const dataUrl = `data:${req.file.mimetype};base64,${base64}`;
+    // Upload langsung ke Vercel Blob Storage (akses publik CDN)
+    const blob = await put(safePathname, req.file.buffer, {
+      access: 'public',
+      token: env.BLOB_READ_WRITE_TOKEN,
+      contentType: req.file.mimetype,
+    });
 
     res.status(200).json({
       success: true,
-      message: 'Foto produk berhasil diproses (Dev Fallback Data URL).',
+      message: 'Foto produk berhasil diunggah ke Vercel Blob Storage.',
       data: {
-        url: dataUrl,
+        url: blob.url,
+        downloadUrl: blob.downloadUrl,
+        pathname: blob.pathname,
       },
     });
   } catch (error: any) {
-    console.error('Upload Error:', error);
+    console.error('Vercel Blob Upload Error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Gagal mengunggah foto ke penyimpanan cloud.',
+      message: `Gagal mengunggah foto ke Vercel Blob Storage: ${error.message || 'Terjadi kesalahan sistem'}`,
     });
   }
 };
+
+

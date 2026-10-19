@@ -1,6 +1,9 @@
 // backend/src/controllers/product.controller.ts
 import { Request, Response } from 'express';
+import { del } from '@vercel/blob';
 import { prisma } from '../config/prisma';
+import { env } from '../config/env';
+
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -135,6 +138,22 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       },
     });
 
+    // Lifecycle management: hapus foto lama dari Vercel Blob jika diganti dengan foto baru
+    if (
+      imageUrl &&
+      existing.imageUrl &&
+      imageUrl !== existing.imageUrl &&
+      existing.imageUrl.includes('blob.vercel-storage.com') &&
+      env.BLOB_READ_WRITE_TOKEN &&
+      !env.BLOB_READ_WRITE_TOKEN.includes('xxxxxxxx')
+    ) {
+      try {
+        await del(existing.imageUrl, { token: env.BLOB_READ_WRITE_TOKEN });
+      } catch (blobErr: any) {
+        console.warn('⚠️ Gagal menghapus foto lama dari Vercel Blob:', blobErr.message);
+      }
+    }
+
     res.status(200).json({
       success: true,
       message: 'Data produk berhasil diperbarui.',
@@ -156,6 +175,20 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     await prisma.product.delete({ where: { id } });
+
+    // Lifecycle management: Hapus file gambar dari Vercel Blob Storage jika URL berasal dari Blob
+    if (
+      existing.imageUrl &&
+      existing.imageUrl.includes('blob.vercel-storage.com') &&
+      env.BLOB_READ_WRITE_TOKEN &&
+      !env.BLOB_READ_WRITE_TOKEN.includes('xxxxxxxx')
+    ) {
+      try {
+        await del(existing.imageUrl, { token: env.BLOB_READ_WRITE_TOKEN });
+      } catch (blobErr: any) {
+        console.warn('⚠️ Gagal menghapus gambar dari Vercel Blob Storage:', blobErr.message);
+      }
+    }
 
     res.status(200).json({
       success: true,
