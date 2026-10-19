@@ -1,6 +1,6 @@
 import { formatIDR } from './utils';
 
-const DEFAULT_WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '6281234567890';
+const DEFAULT_WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '6281283301830';
 
 /**
  * Generates official formatted WhatsApp inquiry link:

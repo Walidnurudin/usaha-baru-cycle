@@ -51,8 +51,8 @@ export class PdfService {
       });
     };
 
-    // Header Branding
-    doc.setFillColor(30, 41, 59); // Slate-800
+    // Header Branding: Teal Gelap #064E5A (RGB: 6, 78, 90)
+    doc.setFillColor(6, 78, 90);
     doc.rect(0, 0, 210, 32, 'F');
 
     doc.setTextColor(255, 255, 255);
@@ -64,7 +64,7 @@ export class PdfService {
     doc.setFontSize(9);
     doc.setTextColor(226, 232, 240);
     doc.text('Sistem Informasi E-Katalog Digital & Rekapitulasi Penjualan UMKM', 14, 20);
-    doc.text('Jl. Raya Sepeda No. 88, Kontak/WA: +62 812-3456-7890', 14, 25);
+    doc.text('Jl. Assyafiiyah No.3A, Jakasampurna, Bekasi Barat | WA: +62 812-8330-1830', 14, 25);
 
     // Document Title
     doc.setTextColor(15, 23, 42);
@@ -122,7 +122,7 @@ export class PdfService {
     doc.text('TOTAL OMSET (CONFIRMED/DONE)', 144, 64);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(30, 64, 175); // blue-800
+    doc.setTextColor(198, 106, 10); // Oranye Tembaga #C66A0A
     doc.text(formatRupiah(totalRevenue), 144, 73);
 
     // Table Data
@@ -151,7 +151,7 @@ export class PdfService {
       ],
       body: tableBody,
       headStyles: {
-        fillColor: [30, 41, 59],
+        fillColor: [6, 78, 90], // Teal Gelap
         textColor: 255,
         fontStyle: 'bold',
         fontSize: 9,

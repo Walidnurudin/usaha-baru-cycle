@@ -56,7 +56,7 @@ export default function DashboardOverviewPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard/products"
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm shadow-emerald-600/20 transition"
+            className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm shadow-[#064E5A]/20 transition"
           >
             <Plus className="w-4 h-4" />
             <span>Tambah Produk</span>
@@ -65,7 +65,7 @@ export default function DashboardOverviewPage() {
             href="/dashboard/reports"
             className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition"
           >
-            <FileText className="w-4 h-4 text-emerald-600" />
+            <FileText className="w-4 h-4 text-[#064E5A]" />
             <span>Laporan PDF</span>
           </Link>
         </div>
@@ -97,7 +97,7 @@ export default function DashboardOverviewPage() {
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Total Pesanan
             </span>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#ddedf0] text-[#064E5A] flex items-center justify-center">
               <ShoppingBag className="w-5 h-5" />
             </div>
           </div>
@@ -150,12 +150,12 @@ export default function DashboardOverviewPage() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4 text-emerald-600" />
+            <ShoppingBag className="w-4 h-4 text-[#064E5A]" />
             <h2 className="font-bold text-sm text-slate-800">Inquiry & Pesanan Terbaru</h2>
           </div>
           <Link
             href="/dashboard/orders"
-            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition"
+            className="text-xs font-bold text-[#064E5A] hover:text-[#043d47] flex items-center gap-1 transition"
           >
             <span>Lihat Semua Pesanan</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export default function DashboardOverviewPage() {
                     <td className="py-3.5 px-4 text-slate-800 max-w-xs truncate font-medium">
                       {ord.productName}
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-emerald-700 whitespace-nowrap">
+                    <td className="py-3.5 px-4 font-bold text-[#C66A0A] whitespace-nowrap">
                       {formatIDR(ord.totalAmount)}
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap">

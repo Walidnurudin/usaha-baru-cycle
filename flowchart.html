@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagram Alur - E-Katalog Usaha Baru Cycle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px;
+    }
+    .poster-canvas {
+      width: 1100px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(226, 232, 240, 0.8);
+      padding: 44px;
+      position: relative;
+    }
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+      position: relative;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eff6ff;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid #bfdbfe;
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 14px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Node Terminal: Start & End */
+    .terminal-node {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .pill-start {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 32px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-end {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 36px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Arrow Connector */
+    .arrow-down {
+      width: 2px;
+      height: 28px;
+      background: #cbd5e1;
+      margin: 0 auto;
+      position: relative;
+    }
+    .arrow-down::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #94a3b8;
+    }
+
+    /* Decision Diamond */
+    .decision-container {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      margin: 6px 0;
+    }
+    .decision-box {
+      background: #f8fafc;
+      border: 2px dashed #94a3b8;
+      border-radius: 16px;
+      padding: 10px 24px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    /* Branch Lines */
+    .branch-line-wrap {
+      width: 60%;
+      height: 24px;
+      margin: -2px auto 0;
+      border-top: 2px solid #cbd5e1;
+      border-left: 2px solid #cbd5e1;
+      border-right: 2px solid #cbd5e1;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    /* Two Columns Grid */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    /* Lane Card */
+    .flow-lane {
+      border-radius: 20px;
+      padding: 24px;
+      position: relative;
+    }
+    .lane-customer {
+      background: #f0fdfa;
+      border: 1.5px solid #ccfbf1;
+    }
+    .lane-admin {
+      background: #f5f3ff;
+      border: 1.5px solid #ede9fe;
+    }
+
+    .lane-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+    }
+    .lane-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .icon-customer {
+      background: #0d9488;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+    }
+    .icon-admin {
+      background: #6366f1;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25);
+    }
+
+    .lane-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .title-customer { color: #0f766e; }
+    .title-admin { color: #4338ca; }
+    .lane-subtitle {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Step Cards */
+    .step-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      position: relative;
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-num-cust { background: #ccfbf1; color: #0f766e; }
+    .step-num-admin { background: #ede9fe; color: #4338ca; }
+
+    .step-content h4 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 2px;
+    }
+    .step-content p {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* Condition Box in Admin */
+    .auth-condition {
+      background: #fffbeb;
+      border: 1px dashed #f59e0b;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .auth-condition span.tag-no {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .auth-condition span.tag-yes {
+      background: #dcfce7;
+      color: #15803d;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Sub-grid in Admin step 4 */
+    .admin-subfeatures {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .sub-item {
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      color: #334155;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Bottom Merge Lines */
+    .merge-line-wrap {
+      width: 60%;
+      height: 24px;
+      margin: 16px auto 0;
+      border-bottom: 2px solid #cbd5e1;
+      border-left: 2px solid #cbd5e1;
+      border-right: 2px solid #cbd5e1;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="poster-canvas" id="diagram-canvas">
+    <!-- Header -->
+    <div class="header">
+      <div class="badge">🚲 Capstone Project Architecture</div>
+      <h1>Alur Kerja Sistem E-Katalog Digital</h1>
+      <p>Studi Kasus: Toko Sepeda Usaha Baru Cycle (Web UMKM)</p>
+    </div>
+
+    <!-- Start Node -->
+    <div class="terminal-node">
+      <div class="pill-start">
+        <span>🏁</span> Mulai Akses Aplikasi
+      </div>
+    </div>
+
+    <div class="arrow-down"></div>
+
+    <!-- Decision: Role -->
+    <div class="decision-container">
+      <div class="decision-box">
+        <span>🔄</span> Identifikasi Hak Akses Pengguna
+      </div>
+    </div>
+
+    <!-- Branch Connector -->
+    <div class="branch-line-wrap"></div>
+
+    <!-- Main Grid: 2 Swimlanes -->
+    <div class="flow-grid">
+
+      <!-- LEFT: CUSTOMER FLOW -->
+      <div class="flow-lane lane-customer">
+        <div class="lane-header">
+          <div class="lane-icon icon-customer">👤</div>
+          <div>
+            <div class="lane-title title-customer">Alur Pelanggan / Pengunjung</div>
+            <div class="lane-subtitle">Eksplorasi Katalog & Pembelian Publik</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-num step-num-cust">1</div>
+            <div class="step-content">
+              <h4>Buka Beranda E-Katalog</h4>
+              <p>Melihat banner promo, toko sepeda, serta otomatis tercatat di analitik pengunjung.</p>
+            </div>
+          </div>
+
+          <div class="arrow-down" style="height: 16px;"></div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-num step-num-cust">2</div>
+            <div class="step-content">
+              <h4>Filter Kategori & Pencarian</h4>
+              <p>Memilih kategori (Sepeda Gunung, Lipat, Balap, Sparepart) atau mencari nama barang.</p>
+            </div>
+          </div>
+
+          <div class="arrow-down" style="height: 16px;"></div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-num step-num-cust">3</div>
+            <div class="step-content">
+              <h4>Lihat Detail Sepeda</h4>
+              <p>Memeriksa foto produk, deskripsi spesifikasi, ketersediaan stok, dan harga resmi.</p>
+            </div>
+          </div>
+
+          <div class="arrow-down" style="height: 16px;"></div>
+
+          <!-- Step 4 -->
+          <div class="step-card" style="border-left: 4px solid #0d9488;">
+            <div class="step-num step-num-cust" style="background:#0d9488; color:#fff;">4</div>
+            <div class="step-content">
+              <h4>Klik "Pesan via WhatsApp"</h4>
+              <p>Sistem otomatis membuat link WA dengan format pesan lengkap (Nama Produk, Harga & Catatan) langsung ke nomor toko.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: ADMIN FLOW -->
+      <div class="flow-lane lane-admin">
+        <div class="lane-header">
+          <div class="lane-icon icon-admin">🛠️</div>
+          <div>
+            <div class="lane-title title-admin">Alur Pemilik Toko / Admin</div>
+            <div class="lane-subtitle">Manajemen Katalog, Stok & Rekapitulasi</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-num step-num-admin">1</div>
+            <div class="step-content">
+              <h4>Halaman Login Admin (/login)</h4>
+              <p>Memasukkan email & password terdaftar untuk autentikasi sistem.</p>
+            </div>
+          </div>
+
+          <div class="arrow-down" style="height: 14px;"></div>
+
+          <!-- Auth Check Condition -->
+          <div class="auth-condition">
+            <span><strong>Cek Kredensial?</strong></span>
+            <div>
+              <span class="tag-no">Salah ➔ Muncul Error</span>
+              <span class="tag-yes" style="margin-left: 4px;">Benar ➔ Buat JWT Token</span>
+            </div>
+          </div>
+
+          <div class="arrow-down" style="height: 14px;"></div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-num step-num-admin">2</div>
+            <div class="step-content">
+              <h4>Dashboard Analitik Toko</h4>
+              <p>Melihat ringkasan metrik: Total Produk, Pesanan Masuk, Total Pengunjung, dan Estimasi Omset.</p>
+            </div>
+          </div>
+
+          <div class="arrow-down" style="height: 14px;"></div>
+
+          <!-- Step 3 -->
+          <div class="step-card" style="border-left: 4px solid #6366f1;">
+            <div class="step-num step-num-admin" style="background:#6366f1; color:#fff;">3</div>
+            <div class="step-content" style="width: 100%;">
+              <h4>Operasional & Laporan</h4>
+              <div class="admin-subfeatures">
+                <div class="sub-item">📦 Kelola Produk (Tambah, Ubah Harga/Stok, Hapus)</div>
+                <div class="sub-item">💬 Monitoring Pesanan Masuk dari WhatsApp</div>
+                <div class="sub-item">📑 Filter Periode & Cetak Laporan Penjualan (PDF)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Merge Bottom Connector -->
+    <div class="merge-line-wrap"></div>
+    <div class="arrow-down"></div>
+
+    <!-- End Node -->
+    <div class="terminal-node">
+      <div class="pill-end">
+        <span>✅</span> Selesai / Transaksi Tercatat
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Sistem Informasi E-Katalog & Penjualan UMKM • Usaha Baru Cycle • 2026
+    </div>
+  </div>
+
+</body>
+</html>

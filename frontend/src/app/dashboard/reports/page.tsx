@@ -94,7 +94,7 @@ export default function SalesReportPage() {
         <button
           onClick={handleExportPdf}
           disabled={downloading || orders.length === 0}
-          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition disabled:opacity-50 self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-[#064E5A]/20 transition disabled:opacity-50 self-start sm:self-auto"
         >
           {downloading ? (
             <>
@@ -166,7 +166,7 @@ export default function SalesReportPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
           <div className="text-[11px] font-bold text-slate-400 uppercase">Total Omset Penjualan</div>
-          <div className="text-2xl font-extrabold text-blue-700 mt-2">
+          <div className="text-2xl font-extrabold text-[#C66A0A] mt-2">
             {formatIDR(totalRevenue)}
           </div>
           <div className="text-[11px] text-slate-500 mt-1">Confirmed + Completed</div>
@@ -239,7 +239,7 @@ export default function SalesReportPage() {
                         {ord.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-emerald-700 text-right whitespace-nowrap">
+                    <td className="py-3.5 px-4 font-bold text-[#C66A0A] text-right whitespace-nowrap">
                       {formatIDR(ord.totalAmount)}
                     </td>
                   </tr>

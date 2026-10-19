@@ -118,7 +118,7 @@ async function main() {
   const sampleOrders = [
     {
       customerName: 'Budi Santoso',
-      customerWa: '6281234567890',
+      customerWa: '6281283301830',
       productName: 'Polygon Premier 5 MTB 27.5"',
       totalAmount: 4950000,
       status: 'CONFIRMED' as const,

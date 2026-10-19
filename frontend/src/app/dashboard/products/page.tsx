@@ -198,7 +198,7 @@ export default function ProductManagementPage() {
 
         <button
           onClick={handleOpenAddModal}
-          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-[#064E5A]/20 transition self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Produk Baru</span>
@@ -214,7 +214,7 @@ export default function ProductManagementPage() {
             placeholder="Cari produk..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#064E5A]"
           />
         </div>
 
@@ -222,7 +222,7 @@ export default function ProductManagementPage() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#064E5A]"
           >
             <option value="all">Semua Kategori</option>
             {categories.map((c) => (
@@ -282,7 +282,7 @@ export default function ProductManagementPage() {
                     <td className="py-3 px-4 text-slate-600 font-medium">
                       {prod.category?.name || '-'}
                     </td>
-                    <td className="py-3 px-4 font-bold text-emerald-700 whitespace-nowrap">
+                    <td className="py-3 px-4 font-bold text-[#C66A0A] whitespace-nowrap">
                       {formatIDR(prod.price)}
                     </td>
                     <td className="py-3 px-4 font-mono font-bold text-slate-800">
@@ -290,7 +290,7 @@ export default function ProductManagementPage() {
                     </td>
                     <td className="py-3 px-4">
                       {prod.isAvailable && prod.stock > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 text-[11px] text-[#064E5A] font-semibold bg-[#ddedf0] px-2 py-0.5 rounded-full border border-[#c0dfe4]">
                           <CheckCircle2 className="w-3 h-3" /> Ready
                         </span>
                       ) : (
@@ -501,7 +501,7 @@ export default function ProductManagementPage() {
                 <button
                   type="submit"
                   disabled={formLoading || uploadingImage}
-                  className="w-2/3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-md shadow-emerald-600/20 disabled:opacity-50"
+                  className="w-2/3 py-2.5 rounded-xl bg-[#064E5A] hover:bg-[#043d47] text-white font-bold transition shadow-md shadow-[#064E5A]/20 disabled:opacity-50"
                 >
                   {formLoading ? 'Menyimpan...' : editingProduct ? 'Simpan Perubahan' : 'Tambahkan ke Katalog'}
                 </button>

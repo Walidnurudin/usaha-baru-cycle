@@ -162,7 +162,7 @@ export default function OrderManagementPage() {
                       <td className="py-3.5 px-4 text-slate-800 max-w-xs truncate font-medium">
                         {ord.productName}
                       </td>
-                      <td className="py-3.5 px-4 font-bold text-emerald-700 whitespace-nowrap">
+                      <td className="py-3.5 px-4 font-bold text-[#C66A0A] whitespace-nowrap">
                         {formatIDR(ord.totalAmount)}
                       </td>
                       <td className="py-3.5 px-4 whitespace-nowrap">
@@ -192,9 +192,9 @@ export default function OrderManagementPage() {
                           href={replyUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition shadow-sm"
+                          className="inline-flex items-center gap-1.5 bg-[#ddedf0] hover:bg-[#c0dfe4] text-[#064E5A] text-[11px] font-bold px-3 py-1.5 rounded-lg border border-[#acd3db] transition shadow-sm"
                         >
-                          <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                          <MessageCircle className="w-3.5 h-3.5 text-[#064E5A]" />
                           <span>Balas di WA</span>
                         </a>
                       </td>

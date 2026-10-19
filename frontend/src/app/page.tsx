@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Bike,
   Search,
   MessageCircle,
   ShieldCheck,
@@ -19,6 +18,11 @@ import {
   Filter,
   Sparkles,
   ShoppingBag,
+  Mail,
+  Phone,
+  RefreshCw,
+  Store,
+  Navigation,
 } from 'lucide-react';
 import { Product, Category } from '@/types';
 import { fetchProducts, fetchCategories, submitOrder } from '@/lib/api';
@@ -117,12 +121,12 @@ export default function CatalogLandingPage() {
 
       setOrderSuccess(true);
 
-      // 2. Open WhatsApp with pre-formatted message
+      // 2. Open WhatsApp with pre-formatted message to +62 812-8330-1830
       const waUrl = generateWhatsAppOrderUrl(activeModalProduct.name, activeModalProduct.price);
       setTimeout(() => {
         window.open(waUrl, '_blank');
         handleCloseModal();
-      }, 700);
+      }, 600);
     } catch (err: any) {
       alert('Gagal memproses pesanan: ' + err.message);
     } finally {
@@ -131,154 +135,203 @@ export default function CatalogLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-[#F3F6F6] text-[#243238] flex flex-col selection:bg-[#064E5A] selection:text-white">
       {/* Top Banner Announcement */}
-      <div className="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
+      <div className="bg-[#03262d] text-slate-300 text-xs py-2 px-4 border-b border-[#05424d]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-          <div className="flex items-center gap-2">
-            <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-              Katalog Digital
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="bg-[#C66A0A] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+              Katalog Resmi
             </span>
-            <span>Toko Sepeda Usaha Baru Cycle - Melayani Pembelian Sepeda & Spare Parts Original</span>
+            <span className="text-slate-200 font-medium">
+              Usaha Baru Cycle &bull; Bike Parts, Accessoris & Tukar Tambah
+            </span>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-emerald-400" /> Buka: 08.00 - 18.00 WIB
+          <div className="flex items-center gap-4 text-slate-300">
+            <span className="flex items-center gap-1.5 text-xs">
+              <Clock className="w-3.5 h-3.5 text-[#C66A0A]" />
+              <span>Sel - Min: 08:00 - 17:00 WIB (Senin Tutup)</span>
             </span>
             <Link
               href="/login"
-              className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-medium transition"
+              className="flex items-center gap-1 text-[#94cbd5] hover:text-white font-medium transition"
             >
-              <LogIn className="w-3.5 h-3.5" /> Login Admin UMKM
+              <LogIn className="w-3.5 h-3.5" /> Login Admin
             </Link>
           </div>
         </div>
       </div>
 
       {/* Main Navbar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           {/* Logo & Store Identity */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition transform">
-              <Bike className="w-7 h-7" />
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-white border border-slate-200/90 shadow-md p-1 flex items-center justify-center group-hover:scale-105 transition transform overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="Logo Usaha Baru Cycle"
+                width={44}
+                height={44}
+                className="object-contain w-full h-full"
+                priority
+              />
             </div>
             <div>
-              <div className="font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight flex items-center gap-1.5">
+              <div className="font-extrabold text-xl sm:text-2xl text-[#243238] tracking-tight flex items-center gap-1.5">
                 <span>USAHA BARU</span>
-                <span className="text-emerald-600">CYCLE</span>
+                <span className="text-[#064E5A]">CYCLE</span>
               </div>
-              <p className="text-xs text-slate-500 font-medium tracking-wide">
-                Katalog Sepeda & Komponen UMKM
+              <p className="text-[11px] sm:text-xs text-slate-500 font-semibold tracking-wide">
+                Bike Parts &bull; Accessoris &bull; Tukar Tambah
               </p>
             </div>
           </Link>
 
-          {/* Contact Direct WhatsApp */}
-          <div className="flex items-center gap-3">
+          {/* Quick Contact & Store Actions */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Tokopedia Badge Link */}
             <a
-              href="https://wa.me/6281234567890?text=Halo%20Usaha%20Baru%20Cycle,%20saya%20ingin%20bertanya%20seputar%20sepeda%20dan%20servis."
+              href="https://tokopedia.com/ubcycle"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-sm font-semibold px-4 py-2.5 rounded-xl border border-emerald-200 transition shadow-sm"
+              className="hidden lg:inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-2 rounded-xl border border-emerald-200 transition"
+              title="Kunjungi Tokopedia Usaha Baru Cycle"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-600" />
-              <span>Konsultasi WA</span>
+              <Store className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Tokopedia</span>
+              <ExternalLink className="w-3 h-3 text-emerald-500" />
             </a>
+
+            {/* Direct WhatsApp Inquiry */}
+            <a
+              href="https://wa.me/6281283301830?text=Halo%20Usaha%20Baru%20Cycle,%20saya%20ingin%20konsultasi%20seputar%20sepeda,%20spare%20part,%20atau%20layanan%20tukar%20tambah."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs sm:text-sm font-semibold px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl transition shadow-sm shadow-[#064E5A]/25"
+            >
+              <MessageCircle className="w-4 h-4 text-emerald-300" />
+              <span>WhatsApp Toko</span>
+            </a>
+
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-xl transition shadow-sm"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-slate-100 text-xs font-medium px-3.5 py-2.5 rounded-xl transition"
             >
-              <span>Dashboard Admin</span>
-              <ChevronRight className="w-4 h-4" />
+              <span>Dashboard</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white py-16 sm:py-24">
-        {/* Subtle Background Glows */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#03262d] via-[#064E5A] to-[#04343d] text-white py-14 sm:py-20 shadow-inner">
+        {/* Subtle Background Glows matching the palette */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#C66A0A]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#064E5A]/40 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Sistem Informasi E-Katalog Digital Resmi UMKM</span>
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-[#ddedf0] text-xs font-semibold px-4 py-1.5 rounded-full mb-5 backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-[#ecb778]" />
+            <span>Katalog Resmi & Sistem Informasi Penjualan UMKM</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight">
-            Pilihan Sepeda & Spare Parts Berkualitas di{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-              Usaha Baru Cycle
-            </span>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight text-white">
+            Pusat Sepeda, Spare Parts & Komponen di{' '}
+            <span className="text-[#ecb778]">Usaha Baru Cycle</span>
           </h1>
 
-          <p className="mt-5 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
-            Katalog terlengkap: Mountain Bike (MTB), Sepeda Lipat, Road Bike, hingga komponen resmi.
-            Cek ketersediaan stok real-time dan pesan langsung terhubung ke WhatsApp toko.
+          <p className="mt-4 text-sm sm:text-base lg:text-lg text-[#ddedf0] max-w-2xl mx-auto font-normal leading-relaxed">
+            Temukan Mountain Bike (MTB), Sepeda Lipat, Road Bike, serta koleksi <strong>Bike Parts</strong> dan <strong>Accessoris</strong> original.
+            Kami juga melayani <strong>Tukar Tambah</strong> sepeda langsung di Jakasampurna, Bekasi Barat.
           </p>
 
-          {/* Quick Value Props */}
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto text-left">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-sm flex items-center gap-2.5">
-              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+          {/* Quick Value Props (4 Cards from Photo 2) */}
+          <div className="mt-9 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto text-left">
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-3.5 backdrop-blur-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#C66A0A]/30 flex items-center justify-center shrink-0">
+                <Wrench className="w-5 h-5 text-[#f4d3a9]" />
+              </div>
               <div>
-                <div className="text-xs font-bold text-white">100% Original</div>
-                <div className="text-[11px] text-slate-400">Garansi Pabrikan</div>
+                <div className="text-xs font-bold text-white">Bike Parts</div>
+                <div className="text-[11px] text-slate-300">Komponen Original</div>
               </div>
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-sm flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-3.5 backdrop-blur-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#C66A0A]/30 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-5 h-5 text-[#f4d3a9]" />
+              </div>
               <div>
-                <div className="text-xs font-bold text-white">Stok Real-Time</div>
-                <div className="text-[11px] text-slate-400">Pembaruan Rutin</div>
+                <div className="text-xs font-bold text-white">Accessoris</div>
+                <div className="text-[11px] text-slate-300">Perlengkapan Lengkap</div>
               </div>
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-sm flex items-center gap-2.5">
-              <MessageCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-3.5 backdrop-blur-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#C66A0A]/30 flex items-center justify-center shrink-0">
+                <RefreshCw className="w-5 h-5 text-[#f4d3a9]" />
+              </div>
               <div>
-                <div className="text-xs font-bold text-white">Pesan WhatsApp</div>
-                <div className="text-[11px] text-slate-400">Respon Cepat</div>
+                <div className="text-xs font-bold text-white">Tukar Tambah</div>
+                <div className="text-[11px] text-slate-300">Upgrade Sepeda Anda</div>
               </div>
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-sm flex items-center gap-2.5">
-              <Wrench className="w-5 h-5 text-emerald-400 shrink-0" />
+
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-3.5 backdrop-blur-sm flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#C66A0A]/30 flex items-center justify-center shrink-0">
+                <MessageCircle className="w-5 h-5 text-[#f4d3a9]" />
+              </div>
               <div>
-                <div className="text-xs font-bold text-white">Bengkel Servis</div>
-                <div className="text-[11px] text-slate-400">Mekanik Handal</div>
+                <div className="text-xs font-bold text-white">Pesan via WhatsApp</div>
+                <div className="text-[11px] text-slate-300">Respon Ramah & Cepat</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Catalog Section */}
+      {/* Main Catalog Section (Abu-abu kebiruan #F3F6F6 background) */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        {/* Section Heading */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#243238] tracking-tight">
+              Katalog Produk Pilihan
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Jelajahi unit sepeda, komponen suku cadang, dan aksesoris resmi bergaransi.
+            </p>
+          </div>
+          <div className="text-xs font-semibold text-[#064E5A] bg-[#ddedf0] px-3 py-1.5 rounded-lg border border-[#c0dfe4]">
+            Menampilkan {filteredProducts.length} dari {products.length} Produk
+          </div>
+        </div>
+
         {/* Search & Filter Toolbar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-5 mb-8">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
             {/* Search Input */}
             <div className="relative w-full md:w-96">
               <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Cari nama sepeda, tipe, atau spare part..."
+                placeholder="Cari nama sepeda, aksesoris, atau spare parts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-slate-50 transition"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] text-sm bg-[#F3F6F6] text-[#243238] transition placeholder:text-slate-400"
               />
             </div>
 
             {/* Toggle Only Ready Stock */}
             <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer select-none">
+              <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#243238] cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={onlyAvailable}
                   onChange={(e) => setOnlyAvailable(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                  className="w-4 h-4 text-[#064E5A] rounded border-slate-300 focus:ring-[#064E5A]"
                 />
                 <span>Hanya Tampilkan Stok Ready</span>
               </label>
@@ -286,16 +339,16 @@ export default function CatalogLandingPage() {
           </div>
 
           {/* Category Chips Bar */}
-          <div className="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" /> Kategori:
+              <Filter className="w-3.5 h-3.5 text-[#064E5A]" /> Kategori:
             </span>
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
                 selectedCategory === 'all'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-[#064E5A] text-white shadow-sm'
+                  : 'bg-[#F3F6F6] text-[#243238] hover:bg-slate-200'
               }`}
             >
               Semua Produk ({products.length})
@@ -304,10 +357,10 @@ export default function CatalogLandingPage() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.slug || cat.id)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
                   selectedCategory === cat.slug || selectedCategory === cat.id
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-[#064E5A] text-white shadow-sm'
+                    : 'bg-[#F3F6F6] text-[#243238] hover:bg-slate-200'
                 }`}
               >
                 {cat.name}
@@ -322,7 +375,7 @@ export default function CatalogLandingPage() {
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <div
                 key={n}
-                className="bg-white rounded-2xl border border-slate-200 p-4 animate-pulse h-96 flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-slate-200 p-4 animate-pulse h-96 flex flex-col justify-between shadow-sm"
               >
                 <div className="w-full h-48 bg-slate-200 rounded-xl" />
                 <div className="space-y-3 mt-4">
@@ -335,12 +388,11 @@ export default function CatalogLandingPage() {
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 p-8">
+          <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300 p-8 shadow-sm">
             <ShoppingBag className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-800">Tidak ada produk yang sesuai</h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto">
-              Coba ganti kata kunci pencarian atau pilih kategori lain untuk melihat koleksi sepeda
-              Usaha Baru Cycle.
+            <h3 className="text-lg font-bold text-[#243238]">Tidak ada produk yang sesuai</h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
+              Coba ganti kata kunci pencarian atau pilih kategori lain untuk melihat koleksi Usaha Baru Cycle.
             </p>
             <button
               onClick={() => {
@@ -348,7 +400,7 @@ export default function CatalogLandingPage() {
                 setSearchQuery('');
                 setOnlyAvailable(false);
               }}
-              className="mt-5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition"
+              className="mt-5 px-4 py-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-semibold rounded-xl transition shadow-sm"
             >
               Reset Filter Pencarian
             </button>
@@ -361,7 +413,7 @@ export default function CatalogLandingPage() {
               return (
                 <div
                   key={product.id}
-                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-emerald-200 transition-all duration-300 flex flex-col group"
+                  className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#064E5A]/40 transition-all duration-300 flex flex-col group"
                 >
                   {/* Image Container with Stock Status Badge */}
                   <div className="relative w-full h-56 bg-slate-100 overflow-hidden">
@@ -374,14 +426,14 @@ export default function CatalogLandingPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
 
-                    {/* Stock Status Badge */}
+                    {/* Stock Status Badge (Teal for ready) */}
                     <div className="absolute top-3 left-3">
                       {isStockReady ? (
-                        <span className="inline-flex items-center gap-1 bg-emerald-600/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
-                          <CheckCircle2 className="w-3 h-3" /> Ready Stock ({product.stock})
+                        <span className="inline-flex items-center gap-1 bg-[#064E5A]/95 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
+                          <CheckCircle2 className="w-3 h-3 text-[#f4d3a9]" /> Ready Stock ({product.stock})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 bg-rose-600/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
+                        <span className="inline-flex items-center gap-1 bg-rose-600/95 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
                           <XCircle className="w-3 h-3" /> Stok Habis
                         </span>
                       )}
@@ -390,7 +442,7 @@ export default function CatalogLandingPage() {
                     {/* Category Pill */}
                     {product.category && (
                       <div className="absolute bottom-3 left-3">
-                        <span className="bg-slate-900/80 backdrop-blur-md text-slate-200 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                        <span className="bg-[#03262d]/85 backdrop-blur-md text-[#ddedf0] text-[10px] font-medium px-2 py-0.5 rounded-md">
                           {product.category.name}
                         </span>
                       </div>
@@ -400,7 +452,7 @@ export default function CatalogLandingPage() {
                   {/* Product Details */}
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-bold text-slate-900 text-base group-hover:text-emerald-700 transition line-clamp-1">
+                      <h3 className="font-bold text-[#243238] text-base group-hover:text-[#064E5A] transition line-clamp-1">
                         {product.name}
                       </h3>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
@@ -409,8 +461,11 @@ export default function CatalogLandingPage() {
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-slate-100">
-                      <div className="text-xs text-slate-400 font-medium">Harga Resmi Toko</div>
-                      <div className="text-lg font-extrabold text-emerald-700 tracking-tight">
+                      <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
+                        Harga Toko
+                      </div>
+                      {/* Price in Copper Orange #C66A0A (Warna aksen harga spesial) */}
+                      <div className="text-xl font-extrabold text-[#C66A0A] tracking-tight">
                         {formatIDR(product.price)}
                       </div>
 
@@ -419,11 +474,11 @@ export default function CatalogLandingPage() {
                         onClick={() => handleOpenOrderModal(product)}
                         className={`w-full mt-3 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-sm ${
                           isStockReady
-                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                            : 'bg-slate-800 hover:bg-slate-900 text-slate-100'
+                            ? 'bg-[#064E5A] hover:bg-[#043d47] text-white shadow-[#064E5A]/20'
+                            : 'bg-slate-800 hover:bg-slate-900 text-slate-200'
                         }`}
                       >
-                        <MessageCircle className="w-4 h-4 text-emerald-300" />
+                        <MessageCircle className="w-4 h-4 text-[#ecb778]" />
                         <span>{isStockReady ? 'Inquire via WhatsApp' : 'Tanya Estimasi Restock'}</span>
                       </button>
                     </div>
@@ -433,45 +488,153 @@ export default function CatalogLandingPage() {
             })}
           </div>
         )}
+
+        {/* UMKM Profile & Store Features Showcase Card (Foto 2) */}
+        <section className="mt-16 bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white border border-slate-200 shadow-md p-2 flex items-center justify-center shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Usaha Baru Cycle Logo"
+                  width={80}
+                  height={80}
+                  className="object-contain w-full h-full"
+                />
+              </div>
+              <div>
+                <span className="inline-block bg-[#ddedf0] text-[#064E5A] text-xs font-bold px-2.5 py-0.5 rounded-full mb-1">
+                  Bicycle Shop & Workshop
+                </span>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#243238] tracking-tight">
+                  Usaha Baru Cycle
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                  Spesialis Bike Parts, Accessoris, dan Layanan Tukar Tambah Sepeda di Bekasi.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="https://wa.me/6281283301830?text=Halo%20Usaha%20Baru%20Cycle,%20saya%20ingin%20tanya%20layanan%20tukar%20tambah%20dan%20spare%20part."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition shadow-md shadow-[#064E5A]/20"
+              >
+                <Phone className="w-4 h-4 text-[#ecb778]" />
+                <span>+62 812-8330-1830</span>
+              </a>
+
+              <a
+                href="https://tokopedia.com/ubcycle"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl border border-emerald-200 transition"
+              >
+                <Store className="w-4 h-4 text-emerald-600" />
+                <span>Tokopedia Toko</span>
+                <ExternalLink className="w-3.5 h-3.5 text-emerald-600" />
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-8 pt-8 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#064E5A] uppercase tracking-wider">
+                <Wrench className="w-4 h-4 text-[#C66A0A]" />
+                <span>Layanan Utama</span>
+              </div>
+              <p className="text-sm font-semibold text-[#243238]">
+                Bike Parts &bull; Accessoris &bull; Tukar Tambah
+              </p>
+              <p className="text-xs text-slate-500">
+                Penyediaan komponen sepeda original, perakitan, dan tukar tambah berbagai tipe sepeda.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#064E5A] uppercase tracking-wider">
+                <Clock className="w-4 h-4 text-[#C66A0A]" />
+                <span>Jam Buka Toko</span>
+              </div>
+              <p className="text-sm font-semibold text-[#243238]">
+                Selasa – Minggu: 08:00 – 17:00 WIB
+              </p>
+              <p className="text-xs text-rose-600 font-semibold">
+                Senin: Tutup (Closed)
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#064E5A] uppercase tracking-wider">
+                <MapPin className="w-4 h-4 text-[#C66A0A]" />
+                <span>Lokasi Toko Fisik</span>
+              </div>
+              <p className="text-xs text-[#243238] font-medium leading-relaxed">
+                Jl. Assyafiiyah No.3A, RT.001/RW.018, Jakasampurna, Kec. Bekasi Bar., Kota Bks, Jawa Barat 17145
+              </p>
+              <a
+                href="https://maps.google.com/?q=Jl.+Assyafiiyah+No.3A,+RT.001/RW.018,+Jakasampurna,+Kec.+Bekasi+Bar.,+Kota+Bks,+Jawa+Barat+17145"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#064E5A] hover:underline pt-0.5"
+              >
+                <Navigation className="w-3 h-3 text-[#C66A0A]" />
+                <span>Petunjuk Arah Google Maps &rarr;</span>
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* WhatsApp Order / Inquiry Modal */}
       {activeModalProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
             <button
               onClick={handleCloseModal}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition"
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition"
+              aria-label="Tutup Modal"
             >
               ✕
             </button>
 
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                <MessageCircle className="w-5 h-5" />
+            <div className="flex items-center gap-3.5 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 shadow-sm p-1 flex items-center justify-center shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Usaha Baru Cycle"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
               </div>
               <div>
-                <h3 className="font-extrabold text-slate-900 text-lg">Pesan via WhatsApp</h3>
-                <p className="text-xs text-slate-500">Toko Sepeda Usaha Baru Cycle</p>
+                <h3 className="font-extrabold text-[#243238] text-lg">Pesan via WhatsApp</h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Usaha Baru Cycle &bull; Respon Cepat & Resmi
+                </p>
               </div>
             </div>
 
             {/* Selected Product Summary Box */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-5 flex items-center gap-3">
+            <div className="bg-[#F3F6F6] border border-slate-200 rounded-2xl p-3.5 mb-5 flex items-center gap-3">
               <img
                 src={activeModalProduct.imageUrl}
                 alt={activeModalProduct.name}
-                className="w-16 h-16 object-cover rounded-xl border border-slate-200"
+                className="w-16 h-16 object-cover rounded-xl border border-slate-200 shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-slate-900 text-sm truncate">
+                <h4 className="font-bold text-[#243238] text-sm truncate">
                   {activeModalProduct.name}
                 </h4>
-                <div className="text-xs font-semibold text-emerald-700">
+                {/* Price in Copper Orange */}
+                <div className="text-sm font-extrabold text-[#C66A0A]">
                   {formatIDR(activeModalProduct.price)}
                 </div>
                 <div className="text-[11px] text-slate-500 mt-0.5">
-                  Status: {activeModalProduct.stock > 0 ? `Ready (${activeModalProduct.stock} unit)` : 'Stok Kosong'}
+                  Ketersediaan: {activeModalProduct.stock > 0 ? `Ready (${activeModalProduct.stock} unit)` : 'Stok Habis'}
                 </div>
               </div>
             </div>
@@ -479,7 +642,7 @@ export default function CatalogLandingPage() {
             {/* Form */}
             <form onSubmit={handleConfirmWhatsAppOrder} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                <label className="block text-xs font-bold text-[#243238] uppercase mb-1">
                   Nama Anda <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -488,41 +651,41 @@ export default function CatalogLandingPage() {
                   placeholder="Contoh: Budi Santoso"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none bg-[#F3F6F6] text-[#243238]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                <label className="block text-xs font-bold text-[#243238] uppercase mb-1">
                   Nomor WhatsApp Anda <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="tel"
                   required
-                  placeholder="Contoh: 081234567890"
+                  placeholder="Contoh: 081283301830"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none bg-[#F3F6F6] text-[#243238]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                <label className="block text-xs font-bold text-[#243238] uppercase mb-1">
                   Catatan Tambahan (Opsional)
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Contoh: Apakah bisa sekalian pasang aksesoris atau COD di toko?"
+                  placeholder="Contoh: Apakah bisa sekalian pasang aksesoris atau tukar tambah di toko?"
                   value={orderNotes}
                   onChange={(e) => setOrderNotes(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none resize-none bg-[#F3F6F6] text-[#243238]"
                 />
               </div>
 
-              {/* Message Preview Requirement Box */}
-              <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 text-xs text-slate-700">
-                <span className="font-bold text-emerald-800 block mb-1">Pesan Otomatis WhatsApp:</span>
-                <p className="italic text-slate-600 bg-white/80 p-2 rounded border border-emerald-100 font-mono text-[11px]">
+              {/* Message Preview Box */}
+              <div className="bg-[#ddedf0]/70 border border-[#c0dfe4] rounded-xl p-3 text-xs text-[#243238]">
+                <span className="font-bold text-[#064E5A] block mb-1">Format Pesan Otomatis WhatsApp:</span>
+                <p className="italic text-slate-700 bg-white/90 p-2 rounded border border-[#c0dfe4] font-mono text-[11px]">
                   &quot;Halo Usaha Baru Cycle, saya tertarik dengan {activeModalProduct.name} seharga{' '}
                   {formatIDR(activeModalProduct.price)}. Apakah stok masih ada?&quot;
                 </p>
@@ -540,9 +703,9 @@ export default function CatalogLandingPage() {
                 <button
                   type="submit"
                   disabled={submittingOrder}
-                  className="w-2/3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 disabled:opacity-50"
+                  className="w-2/3 py-2.5 rounded-xl bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#064E5A]/25 disabled:opacity-50"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4 text-[#ecb778]" />
                   <span>{submittingOrder ? 'Menghubungkan...' : 'Lanjut ke WhatsApp'}</span>
                 </button>
               </div>
@@ -551,57 +714,125 @@ export default function CatalogLandingPage() {
         </div>
       )}
 
-      {/* Footer Section */}
-      <footer className="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Footer Section (Teal Gelap #064E5A background) */}
+      <footer className="bg-[#03262d] text-slate-300 text-xs border-t border-[#05424d] mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-white font-extrabold text-base">
-                <Bike className="w-5 h-5 text-emerald-500" />
-                <span>USAHA BARU CYCLE</span>
+            {/* Column 1: Store Brand & Logo */}
+            <div className="space-y-3.5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white border border-slate-300/40 p-1 flex items-center justify-center shrink-0">
+                  <Image
+                    src="/logo.png"
+                    alt="Logo Usaha Baru Cycle"
+                    width={36}
+                    height={36}
+                    className="object-contain"
+                  />
+                </div>
+                <span className="text-white font-extrabold text-base tracking-tight">
+                  USAHA BARU CYCLE
+                </span>
               </div>
               <p className="text-slate-400 text-xs leading-relaxed">
-                Toko sepeda & penyedia suku cadang terpercaya. Melayani penjualan unit baru, spare
-                parts original, serta jasa servis profesional.
+                Toko sepeda & penyedia Bike Parts, Accessoris terpercaya, serta melayani jasa Tukar Tambah
+                sepeda di kawasan Bekasi dan sekitarnya.
               </p>
+              <div className="pt-1 flex items-center gap-2">
+                <a
+                  href="https://tokopedia.com/ubcycle"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-[#ddedf0] text-[11px] font-semibold px-2.5 py-1 rounded-md transition"
+                >
+                  <Store className="w-3 h-3 text-[#ecb778]" /> Tokopedia Resmi
+                </a>
+                <a
+                  href="https://ubcycle.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-[#ddedf0] text-[11px] font-semibold px-2.5 py-1 rounded-md transition"
+                >
+                  <ExternalLink className="w-3 h-3 text-[#ecb778]" /> ubcycle.id
+                </a>
+              </div>
             </div>
 
+            {/* Column 2: Alamat Lengkap Toko Fisik */}
             <div>
               <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">
                 Lokasi Toko Fisik
               </h4>
-              <p className="flex items-start gap-2 text-slate-300">
-                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Jl. Raya Sepeda No. 88, Jawa Timur, Indonesia</span>
-              </p>
+              <div className="space-y-2 text-slate-300">
+                <p className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-[#C66A0A] shrink-0 mt-0.5" />
+                  <span>
+                    Jl. Assyafiiyah No.3A, RT.001/RW.018, Jakasampurna, Kec. Bekasi Bar., Kota Bks, Jawa Barat 17145, Indonesia
+                  </span>
+                </p>
+                <a
+                  href="https://maps.google.com/?q=Jl.+Assyafiiyah+No.3A,+RT.001/RW.018,+Jakasampurna,+Kec.+Bekasi+Bar.,+Kota+Bks,+Jawa+Barat+17145"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] text-[#94cbd5] hover:text-white font-medium pl-6"
+                >
+                  Lihat rute Google Maps &rarr;
+                </a>
+              </div>
             </div>
 
+            {/* Column 3: Jam Operasional */}
             <div>
               <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">
                 Jam Operasional
               </h4>
-              <p className="flex items-start gap-2 text-slate-300">
-                <Clock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Senin - Sabtu: 08.00 - 18.00 WIB<br />Minggu: 08.00 - 15.00 WIB</span>
-              </p>
+              <div className="space-y-2 text-slate-300">
+                <p className="flex items-start gap-2">
+                  <Clock className="w-4 h-4 text-[#C66A0A] shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Selasa – Minggu:</strong><br />08:00 – 17:00 WIB
+                  </span>
+                </p>
+                <p className="pl-6 text-rose-400 font-semibold text-[11px]">
+                  Senin: Tutup (Closed)
+                </p>
+              </div>
             </div>
 
+            {/* Column 4: Kontak Resmi & Admin */}
             <div>
               <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">
-                Akses Pemilik UMKM
+                Kontak Resmi
               </h4>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold transition"
-              >
-                <LogIn className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Masuk Dashboard Owner</span>
-              </Link>
+              <div className="space-y-2 text-slate-300 text-xs">
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-[#C66A0A] shrink-0" />
+                  <a href="https://wa.me/6281283301830" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                    +62 812-8330-1830
+                  </a>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-[#C66A0A] shrink-0" />
+                  <a href="mailto:usahabarucycle.id@gmail.com" className="hover:text-white transition">
+                    usahabarucycle.id@gmail.com
+                  </a>
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-slate-700/60">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 bg-[#064E5A] hover:bg-[#05424d] text-white px-3 py-2 rounded-lg text-xs font-semibold transition"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-[#ecb778]" />
+                  <span>Masuk Dashboard Owner</span>
+                </Link>
+              </div>
             </div>
           </div>
 
-          <div className="mt-10 pt-6 border-t border-slate-800 text-center text-slate-500">
-            &copy; 2025 Toko Sepeda Usaha Baru Cycle. Sistem Informasi E-Katalog Digital UMKM.
+          <div className="mt-12 pt-6 border-t border-slate-800 text-center text-slate-500 text-[11px]">
+            &copy; 2025 Usaha Baru Cycle. Sistem Informasi E-Katalog Digital UMKM. All rights reserved.
           </div>
         </div>
       </footer>
