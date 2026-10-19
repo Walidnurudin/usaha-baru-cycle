@@ -77,8 +77,8 @@ e-katalog/
    npm run prisma:seed
    ```
    *Akun Admin Default:*
-   - **Email**: `admin@usahabarucycle.com`
-   - **Password**: `AdminSepeda123!`
+   - **Akun 1**: `admin@ubcycle.com` / Password: `admin123`
+   - **Akun 2**: `owner@ubcycle.com` / Password: `admin123`
 5. Jalankan server backend:
    ```bash
    npm run dev

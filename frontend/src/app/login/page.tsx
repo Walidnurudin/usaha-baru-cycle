@@ -33,11 +33,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleUseDemoAccount = () => {
-    setEmail('admin@usahabarucycle.com');
-    setPassword('AdminSepeda123!');
-  };
-
   return (
     <div className="min-h-screen bg-[#03262d] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Ambience with Palette Colors */}
@@ -91,7 +86,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   required
-                  placeholder="admin@usahabarucycle.com"
+                  placeholder="masukkan email anda"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#03262d] border border-[#064E5A] text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#C66A0A] focus:border-transparent transition"
@@ -126,28 +121,10 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Quick Demo Helper */}
-          <div className="mt-6 pt-5 border-t border-[#064E5A]">
-            <div className="flex items-center justify-between text-xs mb-2">
-              <span className="text-slate-300">Akun Seeder Default:</span>
-              <button
-                type="button"
-                onClick={handleUseDemoAccount}
-                className="text-[#ecb778] hover:underline font-semibold"
-              >
-                Gunakan Akun Ini
-              </button>
-            </div>
-            <div className="bg-[#03262d] p-2.5 rounded-xl border border-[#05424d] text-[11px] text-slate-300 font-mono space-y-0.5">
-              <div>Email: admin@usahabarucycle.com</div>
-              <div>Pass: AdminSepeda123!</div>
-            </div>
-          </div>
-
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center pt-4 border-t border-[#064E5A]">
             <Link
               href="/"
-              className="text-xs text-[#ddedf0] hover:text-white transition flex items-center justify-center gap-1"
+              className="text-xs text-[#ddedf0] hover:text-white transition flex items-center justify-center gap-1 font-medium"
             >
               &larr; Kembali ke Katalog Publik
             </Link>

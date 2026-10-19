@@ -7,21 +7,34 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding Usaha Baru Cycle database...');
 
-  // 1. Seed Admin User
-  const defaultAdminEmail = 'admin@usahabarucycle.com';
-  const hashedPassword = await bcrypt.hash('AdminSepeda123!', 10);
+  // 1. Seed 2 Admin Users with easy credentials
+  const defaultPassword = await bcrypt.hash('admin123', 10);
 
-  const admin = await prisma.user.upsert({
-    where: { email: defaultAdminEmail },
-    update: {},
+  const admin1 = await prisma.user.upsert({
+    where: { email: 'admin@ubcycle.com' },
+    update: { password: defaultPassword, name: 'Admin Usaha Baru Cycle' },
     create: {
-      email: defaultAdminEmail,
-      name: 'Pemilik Toko Usaha Baru Cycle',
-      password: hashedPassword,
+      email: 'admin@ubcycle.com',
+      name: 'Admin Usaha Baru Cycle',
+      password: defaultPassword,
       role: Role.MSME_ADMIN,
     },
   });
-  console.log(`✅ Admin created: ${admin.email} (Password: AdminSepeda123!)`);
+
+  const admin2 = await prisma.user.upsert({
+    where: { email: 'owner@ubcycle.com' },
+    update: { password: defaultPassword, name: 'Pemilik Usaha Baru Cycle' },
+    create: {
+      email: 'owner@ubcycle.com',
+      name: 'Pemilik Usaha Baru Cycle',
+      password: defaultPassword,
+      role: Role.MSME_ADMIN,
+    },
+  });
+
+  console.log(`✅ Users created:
+  - ${admin1.email} (Password: admin123)
+  - ${admin2.email} (Password: admin123)`);
 
   // 2. Seed Categories
   const categoriesData = [
@@ -114,29 +127,8 @@ async function main() {
   }
   console.log(`✅ Sample products seeded.`);
 
-  // 4. Seed Initial Visitor Logs & Sample Orders
-  const sampleOrders = [
-    {
-      customerName: 'Budi Santoso',
-      customerWa: '6281283301830',
-      productName: 'Polygon Premier 5 MTB 27.5"',
-      totalAmount: 4950000,
-      status: 'CONFIRMED' as const,
-      notes: 'Customer berminat COD langsung di toko Usaha Baru Cycle.',
-    },
-    {
-      customerName: 'Rina Wijaya',
-      customerWa: '6285712345678',
-      productName: 'Pacific Noris 2.8 20" Folding Bike',
-      totalAmount: 3650000,
-      status: 'COMPLETED' as const,
-      notes: 'Sudah dibayar dan diambil di toko.',
-    },
-  ];
+  // 4. Seed Initial Visitor Logs (Optional activity metric)
 
-  for (const ord of sampleOrders) {
-    await prisma.order.create({ data: ord });
-  }
 
   // Seed 42 initial visits
   for (let i = 0; i < 42; i++) {
