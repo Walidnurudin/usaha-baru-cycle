@@ -53,7 +53,14 @@ export default function DashboardOverviewPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link
+            href="/dashboard/orders?action=new"
+            className="inline-flex items-center gap-2 bg-[#C66A0A] hover:bg-[#a35607] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm shadow-[#C66A0A]/20 transition"
+          >
+            <Plus className="w-4 h-4 text-[#ecb778]" />
+            <span>Catat Pesanan WA</span>
+          </Link>
           <Link
             href="/dashboard/products"
             className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm shadow-[#064E5A]/20 transition"
@@ -105,7 +112,7 @@ export default function DashboardOverviewPage() {
             <div className="text-3xl font-extrabold text-slate-900">
               {loading ? '...' : stats?.totalOrders || 0}
             </div>
-            <div className="text-[11px] text-slate-500 mt-1">Inquiry WhatsApp & pemesanan</div>
+            <div className="text-[11px] text-slate-500 mt-1">Transaksi & pesanan deal toko</div>
           </div>
         </div>
 
@@ -151,7 +158,7 @@ export default function DashboardOverviewPage() {
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-4 h-4 text-[#064E5A]" />
-            <h2 className="font-bold text-sm text-slate-800">Inquiry & Pesanan Terbaru</h2>
+            <h2 className="font-bold text-sm text-slate-800">Pesanan Pelanggan Terbaru</h2>
           </div>
           <Link
             href="/dashboard/orders"
@@ -171,13 +178,12 @@ export default function DashboardOverviewPage() {
                 <th className="py-3 px-4 font-bold">No. WhatsApp</th>
                 <th className="py-3 px-4 font-bold">Produk</th>
                 <th className="py-3 px-4 font-bold">Total Nilai</th>
-                <th className="py-3 px-4 font-bold">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-slate-400">
+                  <td colSpan={5} className="text-center py-8 text-slate-400">
                     Memuat pesanan terbaru...
                   </td>
                 </tr>
@@ -191,7 +197,7 @@ export default function DashboardOverviewPage() {
                       {ord.customerName}
                     </td>
                     <td className="py-3.5 px-4 text-slate-600 whitespace-nowrap font-mono">
-                      {ord.customerWa}
+                      +{ord.customerWa}
                     </td>
                     <td className="py-3.5 px-4 text-slate-800 max-w-xs truncate font-medium">
                       {ord.productName}
@@ -199,27 +205,12 @@ export default function DashboardOverviewPage() {
                     <td className="py-3.5 px-4 font-bold text-[#C66A0A] whitespace-nowrap">
                       {formatIDR(ord.totalAmount)}
                     </td>
-                    <td className="py-3.5 px-4 whitespace-nowrap">
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          ord.status === 'COMPLETED'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : ord.status === 'CONFIRMED'
-                            ? 'bg-blue-100 text-blue-800'
-                            : ord.status === 'CANCELLED'
-                            ? 'bg-rose-100 text-rose-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        {ord.status}
-                      </span>
-                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-slate-400">
-                    Belum ada inquiry atau pesanan yang masuk.
+                  <td colSpan={5} className="text-center py-8 text-slate-400">
+                    Belum ada pesanan yang masuk.
                   </td>
                 </tr>
               )}

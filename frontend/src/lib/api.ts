@@ -32,21 +32,45 @@ export async function logVisit() {
   }
 }
 
-export async function submitOrder(orderData: {
-  customerName: string;
-  customerWa: string;
-  productName: string;
-  totalAmount: number;
-  notes?: string;
-}) {
+export async function createManualOrder(
+  token: string,
+  orderData: {
+    customerName: string;
+    customerWa: string;
+    productName: string;
+    totalAmount: number;
+    status?: string;
+    productId?: string;
+    quantity?: number;
+    deductStock?: boolean;
+    notes?: string;
+  }
+) {
   const res = await fetch(`${API_BASE_URL}/orders`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(orderData),
   });
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.message || 'Gagal mengirim pesanan/inquiry');
+    throw new Error(err.message || 'Gagal mencatat pesanan');
+  }
+  return res.json();
+}
+
+export async function deleteOrder(token: string, id: string) {
+  const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Gagal menghapus pesanan');
   }
   return res.json();
 }

@@ -6,7 +6,17 @@ import { PdfService } from '../services/pdf.service';
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { customerName, customerWa, productName, totalAmount, notes } = req.body;
+    const {
+      customerName,
+      customerWa,
+      productName,
+      totalAmount,
+      status,
+      productId,
+      quantity = 1,
+      deductStock = false,
+      notes,
+    } = req.body;
 
     if (!customerName || !customerWa || !productName || totalAmount === undefined) {
       res.status(400).json({
@@ -22,21 +32,92 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       sanitizedPhone = '62' + sanitizedPhone.substring(1);
     }
 
+    // Validate or assign status (default to COMPLETED since order is already finalized/paid)
+    let orderStatus: OrderStatus = OrderStatus.COMPLETED;
+    if (status && Object.values(OrderStatus).includes(status)) {
+      orderStatus = status as OrderStatus;
+    }
+
+    const qtyNumber = Math.max(1, Number(quantity) || 1);
+
+    // If productId is provided and deductStock is requested, update stock atomically
+    if (productId && deductStock) {
+      const result = await prisma.$transaction(async (tx) => {
+        const product = await tx.product.findUnique({
+          where: { id: productId },
+        });
+
+        if (product) {
+          const newStock = Math.max(0, product.stock - qtyNumber);
+          await tx.product.update({
+            where: { id: productId },
+            data: {
+              stock: newStock,
+              isAvailable: newStock > 0 ? product.isAvailable : false,
+            },
+          });
+        }
+
+        const newOrder = await tx.order.create({
+          data: {
+            customerName: customerName.trim(),
+            customerWa: sanitizedPhone,
+            productName: productName.trim(),
+            totalAmount: Number(totalAmount),
+            status: orderStatus,
+            notes: notes || 'Deal pemesanan via WhatsApp Usaha Baru Cycle',
+          },
+        });
+
+        return newOrder;
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Pesanan manual berhasil dicatat dan stok produk disinkronkan.',
+        data: result,
+      });
+      return;
+    }
+
     const order = await prisma.order.create({
       data: {
         customerName: customerName.trim(),
         customerWa: sanitizedPhone,
         productName: productName.trim(),
         totalAmount: Number(totalAmount),
-        status: OrderStatus.INQUIRY,
-        notes: notes || 'Pemesanan/Inquiry via WhatsApp Katalog Online',
+        status: orderStatus,
+        notes: notes || 'Deal pemesanan via WhatsApp Usaha Baru Cycle',
       },
     });
 
     res.status(201).json({
       success: true,
-      message: 'Inquiry pesanan berhasil dicatat.',
+      message: 'Pesanan manual berhasil dicatat.',
       data: order,
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const existing = await prisma.order.findUnique({ where: { id } });
+    if (!existing) {
+      res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan.' });
+      return;
+    }
+
+    await prisma.order.delete({
+      where: { id },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Pesanan berhasil dihapus.',
     });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });

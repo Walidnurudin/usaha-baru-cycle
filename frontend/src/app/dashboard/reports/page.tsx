@@ -4,22 +4,28 @@ import React, { useState, useEffect } from 'react';
 import {
   FileText,
   Download,
-  Calendar,
-  Filter,
-  TrendingUp,
-  ShoppingBag,
-  CheckCircle,
   Loader2,
-  Printer,
 } from 'lucide-react';
 import { fetchAdminOrders, downloadSalesReportPdf } from '@/lib/api';
 import { formatIDR, formatDate } from '@/lib/utils';
 import { Order } from '@/types';
+import FeedbackModal from '@/components/FeedbackModal';
 
 export default function SalesReportPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+
+  // Feedback Modal State (replaces browser alert)
+  const [feedbackModal, setFeedbackModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'danger' as 'danger' | 'warning' | 'info' | 'success',
+  });
+  const showAlert = (title: string, message: string, type: 'danger' | 'warning' | 'info' | 'success' = 'danger') => {
+    setFeedbackModal({ isOpen: true, title, message, type });
+  };
 
   // Date Range Defaults (Default: First day of current month to today)
   const todayStr = new Date().toISOString().split('T')[0];
@@ -65,7 +71,7 @@ export default function SalesReportPage() {
       setDownloading(true);
       await downloadSalesReportPdf(token, startDate, endDate);
     } catch (err: any) {
-      alert('Gagal mengunduh laporan PDF: ' + err.message);
+      showAlert('Gagal Mengunduh Laporan', 'Gagal mengunduh laporan PDF: ' + err.message, 'danger');
     } finally {
       setDownloading(false);
     }
@@ -80,6 +86,16 @@ export default function SalesReportPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Styled Feedback Modal (replaces browser alert) */}
+      <FeedbackModal
+        isOpen={feedbackModal.isOpen}
+        title={feedbackModal.title}
+        message={feedbackModal.message}
+        type={feedbackModal.type}
+        isConfirm={false}
+        confirmText="Mengerti"
+        onClose={() => setFeedbackModal((prev) => ({ ...prev, isOpen: false }))}
+      />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -93,7 +109,7 @@ export default function SalesReportPage() {
 
         <button
           onClick={handleExportPdf}
-          disabled={downloading || orders.length === 0}
+          disabled={downloading}
           className="inline-flex items-center gap-2 bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-[#064E5A]/20 transition disabled:opacity-50 self-start sm:self-auto"
         >
           {downloading ? (

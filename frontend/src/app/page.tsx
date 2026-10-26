@@ -24,7 +24,7 @@ import {
   Store,
 } from 'lucide-react';
 import { Product, Category } from '@/types';
-import { fetchProducts, fetchCategories, submitOrder } from '@/lib/api';
+import { fetchProducts, fetchCategories } from '@/lib/api';
 import { formatIDR } from '@/lib/utils';
 import { generateWhatsAppOrderUrl } from '@/lib/whatsapp';
 import { useVisitorCounter } from '@/hooks/useVisitorCounter';
@@ -40,14 +40,6 @@ export default function CatalogLandingPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [onlyAvailable, setOnlyAvailable] = useState<boolean>(false);
-
-  // Modal State for Inquire / Order
-  const [activeModalProduct, setActiveModalProduct] = useState<Product | null>(null);
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [orderNotes, setOrderNotes] = useState('');
-  const [submittingOrder, setSubmittingOrder] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
 
   // Fetch Categories & Initial Products
   useEffect(() => {
@@ -86,52 +78,10 @@ export default function CatalogLandingPage() {
     return matchesCategory && matchesSearch && matchesAvailability;
   });
 
-  const handleOpenOrderModal = (product: Product) => {
-    setActiveModalProduct(product);
-    setOrderSuccess(false);
-  };
-
-  const handleCloseModal = () => {
-    setActiveModalProduct(null);
-    setCustomerName('');
-    setCustomerPhone('');
-    setOrderNotes('');
-    setOrderSuccess(false);
-  };
-
-  const handleConfirmWhatsAppOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeModalProduct || !customerName.trim() || !customerPhone.trim()) {
-      alert('Harap lengkapi nama dan nomor WhatsApp Anda.');
-      return;
-    }
-
-    try {
-      setSubmittingOrder(true);
-      // 1. Record inquiry/order to backend database
-      await submitOrder({
-        customerName,
-        customerWa: customerPhone,
-        productName: activeModalProduct.name,
-        totalAmount: Number(activeModalProduct.price),
-        notes: orderNotes || undefined,
-      }).catch((err) => {
-        console.warn('Backend order recording note:', err.message);
-      });
-
-      setOrderSuccess(true);
-
-      // 2. Open WhatsApp with pre-formatted message to +62 812-8330-1830
-      const waUrl = generateWhatsAppOrderUrl(activeModalProduct.name, activeModalProduct.price);
-      setTimeout(() => {
-        window.open(waUrl, '_blank');
-        handleCloseModal();
-      }, 600);
-    } catch (err: any) {
-      alert('Gagal memproses pesanan: ' + err.message);
-    } finally {
-      setSubmittingOrder(false);
-    }
+  // Direct WhatsApp inquiry without creating order entry (orders are recorded manually by admin upon deal)
+  const handleDirectWhatsAppInquiry = (product: Product) => {
+    const waUrl = generateWhatsAppOrderUrl(product.name, product.price);
+    window.open(waUrl, '_blank');
   };
 
   return (
@@ -213,14 +163,6 @@ export default function CatalogLandingPage() {
               <MessageCircle className="w-4 h-4 text-emerald-300" />
               <span>WhatsApp Toko</span>
             </a>
-
-            <Link
-              href="/dashboard"
-              className="hidden sm:inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-slate-100 text-xs font-medium px-3.5 py-2.5 rounded-xl transition"
-            >
-              <span>Dashboard</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            </Link>
           </div>
         </div>
       </header>
@@ -464,7 +406,7 @@ export default function CatalogLandingPage() {
 
                       {/* Inquire / Order via WhatsApp Action Button */}
                       <button
-                        onClick={() => handleOpenOrderModal(product)}
+                        onClick={() => handleDirectWhatsAppInquiry(product)}
                         className={`w-full mt-3 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-sm ${isStockReady
                           ? 'bg-[#064E5A] hover:bg-[#043d47] text-white shadow-[#064E5A]/20'
                           : 'bg-slate-800 hover:bg-slate-900 text-slate-200'
@@ -484,132 +426,6 @@ export default function CatalogLandingPage() {
         {/* UMKM Profile & Store Features Showcase Card (Foto 2) */}
         {/* <StoreProfileCard /> */}
       </main>
-
-      {/* WhatsApp Order / Inquiry Modal */}
-      {activeModalProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition"
-              aria-label="Tutup Modal"
-            >
-              ✕
-            </button>
-
-            <div className="flex items-center gap-3.5 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 shadow-sm p-1 flex items-center justify-center shrink-0">
-                <Image
-                  src="/logo.png"
-                  alt="Usaha Baru Cycle"
-                  width={40}
-                  height={40}
-                  className="object-contain"
-                />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-[#243238] text-lg">Pesan via WhatsApp</h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Usaha Baru Cycle &bull; Respon Cepat & Resmi
-                </p>
-              </div>
-            </div>
-
-            {/* Selected Product Summary Box */}
-            <div className="bg-[#F3F6F6] border border-slate-200 rounded-2xl p-3.5 mb-5 flex items-center gap-3">
-              <img
-                src={activeModalProduct.imageUrl}
-                alt={activeModalProduct.name}
-                className="w-16 h-16 object-cover rounded-xl border border-slate-200 shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-[#243238] text-sm truncate">
-                  {activeModalProduct.name}
-                </h4>
-                {/* Price in Copper Orange */}
-                <div className="text-sm font-extrabold text-[#C66A0A]">
-                  {formatIDR(activeModalProduct.price)}
-                </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
-                  Ketersediaan: {activeModalProduct.stock > 0 ? `Ready (${activeModalProduct.stock} unit)` : 'Stok Habis'}
-                </div>
-              </div>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleConfirmWhatsAppOrder} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-[#243238] uppercase mb-1">
-                  Nama Anda <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: Budi Santoso"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none bg-[#F3F6F6] text-[#243238]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#243238] uppercase mb-1">
-                  Nomor WhatsApp Anda <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  required
-                  placeholder="Contoh: 081283301830"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none bg-[#F3F6F6] text-[#243238]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#243238] uppercase mb-1">
-                  Catatan Tambahan (Opsional)
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Contoh: Apakah bisa sekalian pasang aksesoris atau tukar tambah di toko?"
-                  value={orderNotes}
-                  onChange={(e) => setOrderNotes(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none resize-none bg-[#F3F6F6] text-[#243238]"
-                />
-              </div>
-
-              {/* Message Preview Box */}
-              <div className="bg-[#ddedf0]/70 border border-[#c0dfe4] rounded-xl p-3 text-xs text-[#243238]">
-                <span className="font-bold text-[#064E5A] block mb-1">Format Pesan Otomatis WhatsApp:</span>
-                <p className="italic text-slate-700 bg-white/90 p-2 rounded border border-[#c0dfe4] font-mono text-[11px]">
-                  &quot;Halo Usaha Baru Cycle, saya tertarik dengan {activeModalProduct.name} seharga{' '}
-                  {formatIDR(activeModalProduct.price)}. Apakah stok masih ada?&quot;
-                </p>
-              </div>
-
-              {/* Submit Buttons */}
-              <div className="pt-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
-                  className="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-semibold transition"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={submittingOrder}
-                  className="w-2/3 py-2.5 rounded-xl bg-[#064E5A] hover:bg-[#043d47] text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#064E5A]/25 disabled:opacity-50"
-                >
-                  <MessageCircle className="w-4 h-4 text-[#ecb778]" />
-                  <span>{submittingOrder ? 'Menghubungkan...' : 'Lanjut ke WhatsApp'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Footer Section (Teal Gelap #064E5A background) */}
       <footer className="bg-[#03262d] text-slate-300 text-xs border-t border-[#05424d] mt-20">
@@ -643,14 +459,6 @@ export default function CatalogLandingPage() {
                   className="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-[#ddedf0] text-[11px] font-semibold px-2.5 py-1 rounded-md transition"
                 >
                   <Store className="w-3 h-3 text-[#ecb778]" /> Tokopedia Resmi
-                </a>
-                <a
-                  href="https://ubcycle.id"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-[#ddedf0] text-[11px] font-semibold px-2.5 py-1 rounded-md transition"
-                >
-                  <ExternalLink className="w-3 h-3 text-[#ecb778]" /> ubcycle.id
                 </a>
               </div>
             </div>

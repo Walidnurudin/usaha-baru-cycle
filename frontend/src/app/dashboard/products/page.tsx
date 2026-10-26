@@ -24,6 +24,8 @@ import {
 } from '@/lib/api';
 import { formatIDR } from '@/lib/utils';
 import { Product, Category } from '@/types';
+import CustomSelect, { SelectOption } from '@/components/CustomSelect';
+import FeedbackModal from '@/components/FeedbackModal';
 
 export default function ProductManagementPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -48,6 +50,44 @@ export default function ProductManagementPage() {
   const [isAvailable, setIsAvailable] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Feedback Modal State (replaces confirm() and alert())
+  const [feedbackModal, setFeedbackModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info' | 'success';
+    isConfirm: boolean;
+    onConfirm?: () => void;
+    isLoading?: boolean;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    isConfirm: false,
+  });
+
+  const showAlert = (
+    title: string,
+    message: string,
+    type: 'danger' | 'warning' | 'info' | 'success' = 'info'
+  ) => {
+    setFeedbackModal({ isOpen: true, title, message, type, isConfirm: false });
+  };
+
+  const showConfirm = (
+    title: string,
+    message: string,
+    type: 'danger' | 'warning' | 'info' | 'success' = 'danger',
+    onConfirm: () => void
+  ) => {
+    setFeedbackModal({ isOpen: true, title, message, type, isConfirm: true, onConfirm });
+  };
+
+  const closeFeedbackModal = () => {
+    setFeedbackModal((prev) => ({ ...prev, isOpen: false, onConfirm: undefined }));
+  };
 
   const loadData = async () => {
     try {
@@ -108,7 +148,11 @@ export default function ProductManagementPage() {
       const maxSizeBytes = 2 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
         const sizeInMb = (file.size / (1024 * 1024)).toFixed(2);
-        alert(`Ukuran file gambar maksimal 2MB. File yang Anda pilih berukuran ${sizeInMb}MB.`);
+        showAlert(
+          'Ukuran File Terlalu Besar',
+          `Ukuran file gambar maksimal 2MB. File yang Anda pilih berukuran ${sizeInMb}MB. Harap pilih file yang lebih kecil.`,
+          'warning'
+        );
         e.target.value = '';
         return;
       }
@@ -118,7 +162,7 @@ export default function ProductManagementPage() {
       // Instant upload ke server / storage
       const token = localStorage.getItem('ubc_token');
       if (!token) {
-        alert('Sesi admin telah berakhir. Silakan login kembali.');
+        showAlert('Sesi Berakhir', 'Sesi admin telah berakhir. Silakan login kembali.', 'warning');
         return;
       }
 
@@ -127,7 +171,7 @@ export default function ProductManagementPage() {
         const uploadedUrl = await uploadImage(token, file);
         setImageUrl(uploadedUrl);
       } catch (err: any) {
-        alert('Gagal mengunggah foto: ' + err.message);
+        showAlert('Gagal Mengunggah Foto', err.message || 'Terjadi kesalahan saat mengunggah foto produk.', 'danger');
       } finally {
         setUploadingImage(false);
       }
@@ -177,14 +221,22 @@ export default function ProductManagementPage() {
     const token = localStorage.getItem('ubc_token');
     if (!token) return;
 
-    if (confirm(`Yakin ingin menghapus produk "${prodName}" dari katalog?`)) {
-      try {
-        await deleteProduct(token, id);
-        await loadData();
-      } catch (err: any) {
-        alert('Gagal menghapus produk: ' + err.message);
+    showConfirm(
+      'Hapus Produk?',
+      `Yakin ingin menghapus produk "${prodName}" dari katalog? Tindakan ini tidak dapat dibatalkan.`,
+      'danger',
+      async () => {
+        setFeedbackModal((prev) => ({ ...prev, isLoading: true }));
+        try {
+          await deleteProduct(token, id);
+          closeFeedbackModal();
+          await loadData();
+        } catch (err: any) {
+          closeFeedbackModal();
+          showAlert('Gagal Menghapus', err.message || 'Gagal menghapus produk dari katalog.', 'danger');
+        }
       }
-    }
+    );
   };
 
   const filtered = products.filter((p) => {
@@ -196,13 +248,38 @@ export default function ProductManagementPage() {
     return matchesCategory && matchesSearch;
   });
 
+  // Build category options for CustomSelect
+  const categoryFilterOptions: SelectOption[] = [
+    { value: 'all', label: 'Semua Kategori' },
+    ...categories.map((c) => ({ value: c.id, label: c.name })),
+  ];
+
+  const categoryFormOptions: SelectOption[] = categories.map((c) => ({
+    value: c.id,
+    label: c.name,
+  }));
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Feedback Modal (styled replacement for alert / confirm) */}
+      <FeedbackModal
+        isOpen={feedbackModal.isOpen}
+        title={feedbackModal.title}
+        message={feedbackModal.message}
+        type={feedbackModal.type}
+        isConfirm={feedbackModal.isConfirm}
+        confirmText={feedbackModal.isConfirm ? 'Ya, Hapus' : 'Mengerti'}
+        cancelText="Batal"
+        isLoading={feedbackModal.isLoading}
+        onClose={closeFeedbackModal}
+        onConfirm={feedbackModal.onConfirm}
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Manajemen Produk & Katalog
+            Manajemen Produk &amp; Katalog
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Tambah, ubah spesifikasi, kelola stok fisik, dan unggah foto sepeda via Vercel Blob.
@@ -232,18 +309,15 @@ export default function ProductManagementPage() {
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#064E5A]"
-          >
-            <option value="all">Semua Kategori</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+          {/* Styled CustomSelect for category filter */}
+          <div className="w-48">
+            <CustomSelect
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              options={categoryFilterOptions}
+              placeholder="Semua Kategori"
+            />
+          </div>
           <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
             Total: <span className="font-bold text-slate-800">{filtered.length}</span> item
           </div>
@@ -344,9 +418,10 @@ export default function ProductManagementPage() {
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition"
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition"
+              aria-label="Tutup modal"
             >
-              ✕
+              <XCircle className="w-5 h-5" />
             </button>
 
             <h3 className="text-lg font-extrabold text-slate-900 mb-1">
@@ -374,26 +449,22 @@ export default function ProductManagementPage() {
                   placeholder="Contoh: Polygon Premier 5 MTB 27.5 inch"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none text-xs transition"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-700 uppercase mb-1">
+                  <label className="block font-bold text-slate-700 uppercase mb-1.5">
                     Kategori <span className="text-rose-500">*</span>
                   </label>
-                  <select
+                  {/* Styled CustomSelect replacing native <select> */}
+                  <CustomSelect
                     value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs bg-white"
-                  >
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={setCategoryId}
+                    options={categoryFormOptions}
+                    placeholder="Pilih Kategori..."
+                  />
                 </div>
 
                 <div>
@@ -407,7 +478,7 @@ export default function ProductManagementPage() {
                     placeholder="Contoh: 4950000"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none text-xs transition"
                   />
                 </div>
               </div>
@@ -424,7 +495,7 @@ export default function ProductManagementPage() {
                     placeholder="Contoh: 5"
                     value={stock}
                     onChange={(e) => setStock(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none text-xs transition"
                   />
                 </div>
 
@@ -432,12 +503,12 @@ export default function ProductManagementPage() {
                   <label className="block font-bold text-slate-700 uppercase mb-1">
                     Status Ketersediaan
                   </label>
-                  <label className="flex items-center gap-2 mt-2 cursor-pointer font-medium text-slate-700">
+                  <label className="flex items-center gap-2 mt-2.5 cursor-pointer font-medium text-slate-700">
                     <input
                       type="checkbox"
                       checked={isAvailable}
                       onChange={(e) => setIsAvailable(e.target.checked)}
-                      className="w-4 h-4 text-emerald-600 rounded"
+                      className="w-4 h-4 text-[#064E5A] rounded border-slate-300 focus:ring-[#064E5A]"
                     />
                     <span>Tampilkan sebagai Ready Stock</span>
                   </label>
@@ -480,7 +551,7 @@ export default function ProductManagementPage() {
                     placeholder="Atau masukkan URL gambar langsung..."
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-mono"
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-mono focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none"
                   />
 
                   {/* Preview */}
@@ -506,7 +577,7 @@ export default function ProductManagementPage() {
                   placeholder="Frame material, groupset, rem, garansi, dsb..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#064E5A] focus:border-[#064E5A] focus:outline-none text-xs transition resize-none"
                 />
               </div>
 
@@ -514,14 +585,14 @@ export default function ProductManagementPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold transition"
+                  className="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold transition text-xs"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading || uploadingImage}
-                  className="w-2/3 py-2.5 rounded-xl bg-[#064E5A] hover:bg-[#043d47] text-white font-bold transition shadow-md shadow-[#064E5A]/20 disabled:opacity-50"
+                  className="w-2/3 py-2.5 rounded-xl bg-[#064E5A] hover:bg-[#043d47] text-white font-bold transition shadow-md shadow-[#064E5A]/20 disabled:opacity-50 text-xs"
                 >
                   {formLoading ? 'Menyimpan...' : editingProduct ? 'Simpan Perubahan' : 'Tambahkan ke Katalog'}
                 </button>
